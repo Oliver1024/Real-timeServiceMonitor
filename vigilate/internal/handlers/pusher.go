@@ -14,7 +14,7 @@ func (repo *DBRepo) PusherAuth(w http.ResponseWriter, r *http.Request) {
 
 	u, _ := repo.DB.GetUserById(userID)
 
-	params, _ := ioutil.ReadAll(r.Body)          
+	params, _ := ioutil.ReadAll(r.Body)
 
 	presenceData := pusher.MemberData{
 		UserID: strconv.Itoa(userID),
@@ -32,4 +32,14 @@ func (repo *DBRepo) PusherAuth(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(response)
+}
+
+func (repo *DBRepo) TestPusher(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]string)
+	data["message"] = "Hello, world"
+
+	err := repo.App.WsClient.Trigger("public-channel", "test-event", data)
+	if err != nil {
+		log.Println(err)
+	}
 }
